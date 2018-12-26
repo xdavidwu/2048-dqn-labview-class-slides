@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>2048 DQN</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>2048 DQN</h1>
+				</section>
+				<section>
+					<section><h2>What is DQN?</h2></section>
+					<section>
+						tl,dr: Q-learning, but with neural network
+					</section>
+				</section>
+				<section>
+					<section><h2>Q-learning?</h2></section>
+					<section>
+						To learn a function $Q(s,a)$
+						<p class="fragment">$s$: state</p>
+						<p class="fragment">$a$: action</p>
+					</section>
+					<section>
+						$Q(s,a)$?
+						<p class="fragment">$\tiny{Q(s_t,a_t)\leftarrow(1-\alpha)Q(s_t,a_t)+\alpha(r+\gamma\max_{a}Q(s_{t+1},a))}$</p>
+						<p class="fragment">$\alpha$: learning rate</p>
+						<p class="fragment">$\gamma$: discount</p>
+						<p class="fragment">$r_t$: reward</p>
+					</section>
+					<section>
+						Exploration?
+						<p class="fragment">$\epsilon$-greedy</p>
+						<p class="fragment">
+							Do random exploration with probility $\epsilon$,
+							do exploitation otherwise
+						</p>
+					</section>
+</section>
+				<section>
+					<section><h2>Q-learning with 2048?</h2></section>
+					<section>
+						$$A=\{left,bottom,right,top\}$$
+						<p class="fragment">$S$?</p>
+						<p class="fragment">Too big!</p>
+					</section>
+					<section>
+						Divide the states into smaller parts, or...
+						<p class="fragment">Use a neural network!</p>
+					</section>
+				</section>
+				<section>
+					<section><h2>DQN with 2048</h2></section>
+					<section>
+						Our design:
+						<p class="fragment">$s$: log2 of the game table</p>
+						<p class="fragment">$r$: log2 of the score</p>
+						<p class="fragment">$\gamma$: 0.9</p>
+						<p class="fragment">$\epsilon$: an exponential function, decays after each episode</p>
+						<p class="fragment">Train fixed times after each episode instead of each step to reduce training time and increase stability</p>
+					</section>
+					<section>
+						Currently implemented:
+						<p class="fragment">Experience Replay</p>
+						<p class="fragment">Target Q Network</p>
+						<p class="fragment">Double DQN</p>
+					</section>
+					<section>
+						Current performance:
+						<p class="fragment">About 20000 points in average</p>
+						<p class="fragment">Reaches 1024 tile most of the time</p>
+						<p class="fragment">Sometimes reaches 2048 or 4096</p>
+						<p class="fragment">2 convolution layers, 2 fully-connected layers, 1MB of TensorFlow checkpoint size</p>
+						<p class="fragment">19000 episodes, about 4 hours of training</p>
+					</section>
+					<section>
+						Possible improvements:
+						<p class="fragment">Dueling DQN</p>
+						<p class="fragment">Priortized Experience Replay</p>
+						<p class="fragment">Bootstrapped DQN</p>
+					</section>
+				</section>
+				<section>
+					<section><h2>LabVIEW?</h2></section>
+					<section>
+						<p>We implemented a frontend with LabVIEW</p>
+						<p>connect to the AI in Python with a HTTP API</p>
+					</section>
+				</section>
+				<section>
+					<section><h2>Source?</h2></section>
+					<section>
+						<p>The <a target="_blank" rel="noopener noreferrer" href="https://github.com/xdavidwu/2048-dqn">DQN</a></p>
+						<p>This <a target="_blank" rel="noopener noreferrer" href="https://github.com/xdavidwu/2048-dqn-labview-class-slides">slides</a></p>
+					</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				math: {
+					mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+					config: 'TeX-AMS_HTML-full'
+				},
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/math/math.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
